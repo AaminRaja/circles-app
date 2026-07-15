@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const communitySchema = new mongoose.Schema(
   {
@@ -12,22 +12,22 @@ const communitySchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      default: '',
+      default: "",
       maxlength: 300,
     },
     creator: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-module.exports = mongoose.model('Community', communitySchema);
+module.exports = mongoose.model("Community", communitySchema);
