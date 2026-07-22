@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const requireAuth = require("../middleware/requireAuth");
 const Community = require("../models/Community");
+const getPagination = require("../utils/pagination");
+const handleRouteError = require("../utils/handleRouteError");
 
 // Create a community
 router.post("/", requireAuth, async (req, res) => {
@@ -21,45 +23,30 @@ router.post("/", requireAuth, async (req, res) => {
     });
     res.status(201).json(community);
   } catch (error) {
-    if (error.code === 11000) {
-      return res
-        .status(409)
-        .json({ message: "A community with this name already exists" });
-    }
-
-    res
-      .status(500)
-      .json({ message: "Failed to create community", error: error.message });
+    handleRouteError(error, res, "Failed to create community");
   }
 });
 
 // Communities List
 router.get("/", async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-
-    const safePage = Math.max(page, 1);
-    const safeLimit = Math.min(Math.max(limit, 1), 50);
-    const skip = (safePage - 1) * safeLimit;
+    const { page, limit, skip } = getPagination(req);
 
     const communities = await Community.find()
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(safeLimit);
+      .limit(limit);
 
     const totalCommunities = await Community.countDocuments();
 
     res.status(200).json({
       communities,
-      currentPage: safePage,
-      totalPages: Math.ceil(totalCommunities / safeLimit),
+      currentPage: page,
+      totalPages: Math.ceil(totalCommunities / limit),
       totalCommunities,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch communities", error: error.message });
+    handleRouteError(error, res, "Failed to fetch communities");
   }
 });
 
@@ -77,13 +64,7 @@ router.get("/:id", async (req, res) => {
 
     res.status(200).json(community);
   } catch (error) {
-    if (error.name === "CastError") {
-      return res.status(400).json({ message: "Invalid community ID format" });
-    }
-
-    res
-      .status(500)
-      .json({ message: "Failed to fetch community", error: error.message });
+    handleRouteError(error, res, "Failed to fetch community");
   }
 });
 
@@ -105,13 +86,7 @@ router.post("/:id/join", requireAuth, async (req, res) => {
 
     res.status(200).json(community);
   } catch (error) {
-    if(error.name === "CastError"){
-      return res.status(400).json({ message: "Invalid community ID format" });
-    }
-
-    res
-      .status(500)
-      .json({ message: "Failed to join community", error: error.message });
+    handleRouteError(error, res, "Failed to join community");
   }
 });
 
