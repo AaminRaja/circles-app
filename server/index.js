@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth");
 const communityRoutes = require("./routes/communities");
 const postRoutes = require("./routes/posts");
+const commentRoutes = require("./routes/comments");
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/communities", communityRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/comments", commentRoutes);
 
 app.get("/", (req, res) => {
   res.send("Circles API is running");

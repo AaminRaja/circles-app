@@ -34,6 +34,8 @@ router.post(
         imageUrl: req.file ? req.file.path : "",
       });
 
+      await post.populate("author", "username");
+
       res.status(201).json(post);
     } catch (error) {
       handleRouteError(error, res, "Failed to create post");
@@ -92,24 +94,28 @@ router.post("/:id/like", requireAuth, async (req, res) => {
     const { id } = req.params;
     const { userId } = req.user;
 
-    const post = await Post.findById(id);
-    if (!post) {
+    let updatedPost = await Post.findOneAndUpdate(
+      { _id: id, likes: { $ne: userId } },
+      { $addToSet: { likes: userId } },
+      { new: true },
+    );
+
+    let liked = true;
+
+    if (!updatedPost) {
+      updatedPost = await Post.findOneAndUpdate(
+        { _id: id, likes: userId },
+        { $pull: { likes: userId } },
+        { new: true },
+      );
+      liked = false;
+    }
+
+    if (!updatedPost) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    const alreadyLiked = post.likes.some((userIdInArray) => userIdInArray.toString() === userId)
-
-    let updatedPost;
-    if (alreadyLiked) {
-      updatedPost = await Post.findByIdAndUpdate(id, {$pull: {likes:userId}}, { new: true },)
-    } else {
-      updatedPost = await Post.findByIdAndUpdate(id, {$addToSet: {likes:userId}}, { new: true },);
-    }
-
-    res.status(200).json({
-      liked: !alreadyLiked,
-      likeCount: updatedPost.likes.length,
-    });
+    res.status(200).json({ liked, likeCount: updatedPost.likes.length });
   } catch (error) {
     handleRouteError(error, res, "Failed to update like");
   }

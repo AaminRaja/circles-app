@@ -22,6 +22,8 @@ router.post("/", requireAuth, async (req, res) => {
       body,
     });
 
+    await comment.populate("author", "username");
+
     const updatedPost = await Post.findByIdAndUpdate(
       postId,
       { $inc: { commentCount: 1 } },
