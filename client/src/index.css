@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  /* Warm, friendly community palette */
+  --color-bg: #fffaf5;
+  --color-surface: #ffffff;
+  --color-border: #f1e6da;
+
+  --color-primary: #ff6b4a;
+  --color-primary-dark: #e2532f;
+  --color-primary-light: #ffe4da;
+
+  --color-secondary: #6c5ce7;
+  --color-secondary-light: #ece9fd;
+
+  --color-text: #2b2420;
+  --color-text-muted: #8a7f76;
+
+  --color-success: #2f9e5b;
+  --color-danger: #e5484d;
+
+  --font-display: "Quicksand", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+::selection {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+/* Simple utility for line-clamping post/description previews */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
