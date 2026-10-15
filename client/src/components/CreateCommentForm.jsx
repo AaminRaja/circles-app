@@ -14,8 +14,9 @@ export default function CreateCommentForm({ postId, onCreated }) {
 
     setSubmitting(true);
     try {
-      const data = await createComment(postId, body);
-      onCreated(data.comment, data.commentCount);
+      // const data = await createComment(postId, body);
+      // onCreated(data.comment, data.commentCount); //commented to avoid adding comment in FE when posting a comment.
+      await createComment(postId, body);
       setBody('');
     } catch (err) {
       toast.error('Could not post comment');

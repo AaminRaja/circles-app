@@ -9,6 +9,7 @@ import CommentItem from "../components/CommentItem";
 import CreateCommentForm from "../components/CreateCommentForm";
 import Loader from "../components/Loader";
 import toast from "react-hot-toast";
+import socket from "../api/socket";
 
 export default function PostDetailPage() {
   const { id } = useParams();
@@ -30,8 +31,23 @@ export default function PostDetailPage() {
         setLiked(user ? postData.likes?.includes(user.id) : false);
         setComments(commentData.comments);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+      });
   }, [id, user]);
+
+  useEffect(() => {
+    socket.emit("post:join", id);
+
+    socket.on("comment:new", (data) => {
+      handleCommentCreated(data.comment, data.commentCount);
+    });
+
+    return () => {
+      socket.emit("post:leave", id);
+      socket.off("comment:new");
+    };
+  }, [id]);
 
   async function handleLike() {
     if (!user) {
@@ -129,7 +145,8 @@ export default function PostDetailPage() {
           Comments {post.commentCount ? `(${post.commentCount})` : ""}
         </h2>
 
-        <CreateCommentForm postId={id} onCreated={handleCommentCreated} />
+        {/* <CreateCommentForm postId={id} onCreated={handleCommentCreated} /> */}
+        <CreateCommentForm postId={id} />
 
         {comments?.length === 0 ? (
           <p className="text-sm text-text-muted py-4 text-center">
