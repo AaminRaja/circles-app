@@ -7,6 +7,10 @@ const notificationSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     type: {
       type: String,
       enum: ["comment", "like"], // add more values here as you build more notification-triggering features
@@ -15,6 +19,9 @@ const notificationSchema = new mongoose.Schema(
     message: {
       type: String,
       required: true,
+    },
+    commentBody: {
+      type: String,
     },
     relatedPost: {
       type: mongoose.Schema.Types.ObjectId,

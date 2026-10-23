@@ -1,15 +1,17 @@
 import { Link } from "react-router-dom";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Heart } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 export default function NotificationCard({ notification }) {
   const hasPost = Boolean(notification?.relatedPost);
 
+  const Icon = notification?.type === "like" ? Heart : MessageCircle;
+
   const content = (
     <>
       <div className="flex items-start gap-3">
         <div className="w-9 h-9 rounded-full bg-secondary-light flex items-center justify-center shrink-0">
-          <MessageCircle size={16} className="text-secondary" />
+          <Icon size={16} className="text-secondary" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm text-text">{notification?.message}</p>

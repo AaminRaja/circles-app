@@ -6,6 +6,8 @@ const uploadPostImage = require("../middleware/uploadPostImage");
 const Community = require("../models/Community");
 const getPagination = require("../utils/pagination");
 const handleRouteError = require("../utils/handleRouteError");
+const Notification = require("../models/Notification");
+const createNotification = require("../utils/createNotification");
 
 router.post(
   "/",
@@ -113,6 +115,29 @@ router.post("/:id/like", requireAuth, async (req, res) => {
 
     if (!updatedPost) {
       return res.status(404).json({ message: "Post not found" });
+    }
+
+    if (liked) {
+      try {
+        const notificationExists = await Notification.exists({
+          recipient: updatedPost.author,
+          sender: userId,
+          type: "like",
+          relatedPost: updatedPost._id,
+        });
+
+        if (!notificationExists) {
+          createNotification({
+            recipient: updatedPost.author,
+            sender: userId,
+            type: "like",
+            message: `${req.user.username} liked your post`,
+            relatedPost: updatedPost._id,
+          });
+        }
+      } catch (error) {
+        console.error("Like notification check failed:", error);
+      }
     }
 
     res.status(200).json({ liked, likeCount: updatedPost.likes.length });

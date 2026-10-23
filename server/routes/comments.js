@@ -7,6 +7,7 @@ const getPagination = require("../utils/pagination");
 const handleRouteError = require("../utils/handleRouteError");
 const { getIO } = require("../sockets");
 const Notification = require("../models/Notification");
+const createNotification = require("../utils/createNotification");
 
 router.post("/", requireAuth, async (req, res) => {
   try {
@@ -37,17 +38,17 @@ router.post("/", requireAuth, async (req, res) => {
       commentCount: updatedPost.commentCount,
     });
 
+    console.log("userId", userId);
+
     if (postExist.author.toString() !== userId) {
-      const notification = await Notification.create({
+      createNotification({
         recipient: postExist.author,
+        sender: userId,
         type: "comment",
         message: `${req.user.username} commented on your post`,
+        commentBody: body,
         relatedPost: postId,
       });
-
-      getIO()
-        .to(`user:${postExist.author}`)
-        .emit("notification:new", notification);
     }
 
     return res
