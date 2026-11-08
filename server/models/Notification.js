@@ -27,6 +27,10 @@ const notificationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
     },
+    read: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

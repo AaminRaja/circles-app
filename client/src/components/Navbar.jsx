@@ -2,16 +2,20 @@ import { Link, useNavigate } from "react-router-dom";
 import { Users, LogOut, Plus, Bell } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import { useNotifications } from "../context/NotificationContext";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { unreadCount } = useNotifications();
 
   async function handleLogout() {
     await logout();
     toast.success("You've been logged out");
     navigate("/login");
   }
+
+  console.log("unreadCount", unreadCount);
 
   return (
     <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur border-b border-border">
@@ -35,10 +39,19 @@ export default function Navbar() {
               </Link>
               <Link
                 to="/notifications"
-                className="inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-border transition-colors"
-                aria-label="Notifications"
+                className="relative inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-border transition-colors"
+                aria-label={
+                  unreadCount > 0
+                    ? `Notifications, ${unreadCount} unread`
+                    : "Notifications"
+                }
               >
                 <Bell size={19} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#EF6A4A] text-white text-[11px] font-medium leading-none flex items-center justify-center">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
               </Link>
               <span className="hidden sm:inline text-sm text-text-muted">
                 Hi, {user.username}

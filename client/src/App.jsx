@@ -10,29 +10,35 @@ import PostDetailPage from "./pages/PostDetailPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import NotificationsPage from "./pages/NotificationsPage";
+import { NotificationProvider } from "./context/NotificationContext";
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<CommunitiesPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/communities/:id" element={<CommunityDetailPage />} />
-            <Route path="/posts/:id" element={<PostDetailPage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
-            <Route
-              path="/communities/new"
-              element={
-                <RequireAuth>
-                  <CreateCommunityPage />
-                </RequireAuth>
-              }
-            />
-          </Route>
-        </Routes>
+        <NotificationProvider>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<CommunitiesPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route
+                path="/communities/:id"
+                element={<CommunityDetailPage />}
+              />
+              <Route path="/posts/:id" element={<PostDetailPage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route
+                path="/communities/new"
+                element={
+                  <RequireAuth>
+                    <CreateCommunityPage />
+                  </RequireAuth>
+                }
+              />
+            </Route>
+          </Routes>
+        </NotificationProvider>
       </AuthProvider>
     </BrowserRouter>
   );

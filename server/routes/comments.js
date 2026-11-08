@@ -38,8 +38,6 @@ router.post("/", requireAuth, async (req, res) => {
       commentCount: updatedPost.commentCount,
     });
 
-    console.log("userId", userId);
-
     if (postExist.author.toString() !== userId) {
       createNotification({
         recipient: postExist.author,

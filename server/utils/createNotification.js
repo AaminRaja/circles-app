@@ -9,7 +9,6 @@ async function createNotification({
   commentBody,
   relatedPost,
 }) {
-  console.log("opiop", type, message, commentBody, relatedPost);
   
   if (String(recipient) === String(sender)) return null; // never notify yourself
 
